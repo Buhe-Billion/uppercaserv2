@@ -71,15 +71,16 @@ SECTION .text			;	Section containing code
 
 		SCAN:
 			CMP BYTE [R13-1+RBX],61H		;Test input char against 'a'
-			JB  NEXT
-			CMP BYTE [R13-1+RBX],7AH
-			JA  NEXT
+			JB  NEXT										;If below 'a' in ASCII, then not lowercase
+			CMP BYTE [R13-1+RBX],7AH		;Test input char against 'z'
+			JA  NEXT										;If above 'z' in ASCII, then not lowercase
 
-			SUB BYTE [R13-1+RBX],20H
+;We have thus filtered for a lowercase letter which we convert below:
+			SUB BYTE [R13-1+RBX],20H		;Subtract 20h to give uppercase
 
 		NEXT:
-			DEC RBX
-			JNZ SCAN
+			DEC RBX											;Decrement counter
+			JNZ SCAN										;If characters remain, loopback 
 
 
 		WRITE:
