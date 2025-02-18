@@ -62,14 +62,15 @@ SECTION .text			;	Section containing code
 
 ;Setup registers for the process buffer step
 
-			MOV RBX,RAX
-			MOV R13,BUFF
+			MOV RBX,RAX				;Place the number of bytes to be read into RBX...
+;sys_read returns the # of bytes read to rax
+			MOV R13,BUFF			;Place address of buffer into r13
 ;			DEC R13
 
 ;Go through the buffer and convert lowercase chars to uppercase chars
 
 		SCAN:
-			CMP BYTE [R13-1+RBX],61H
+			CMP BYTE [R13-1+RBX],61H		;Test input char against 'a'
 			JB  NEXT
 			CMP BYTE [R13-1+RBX],7AH
 			JA  NEXT
