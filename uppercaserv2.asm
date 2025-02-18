@@ -37,28 +37,49 @@ SECTION .text			;	Section containing code
 			JE DONE
 
 ;Set up registers for buffer step.
-
-			MOV RBX,RAX	;Place the # of bytes read into rbx
-			MOV R13,BUFF	;Place addy of buffer into r13
-			DEC R13		;Adjust count to offest (i.e avoid off by one error)
+;
+;			MOV RBX,RAX	;Place the # of bytes read into rbx
+;			MOV R13,BUFF	;Place addy of buffer into r13
+;			DEC R13		;Adjust count to offest (i.e avoid off by one error)
 
 ;Go through the buffer and convert characters to uppercase
 
-		SCAN:
-			CMP BYTE [R13+RBX],0X61	;Test char against 'a'
-			JB .NEXT		;If below 'a' in ASCII, not lowercase
-			CMP BYTE [R13+RBX],0X7A	;Test char against 'z'
-			JA .NEXT		;If above 'z' in ASCII, not lowercase
+;		SCAN:
+;			CMP BYTE [R13+RBX],0X61	;Test char against 'a'
+;			JB .NEXT		;If below 'a' in ASCII, not lowercase
+;			CMP BYTE [R13+RBX],0X7A	;Test char against 'z'
+;			JA .NEXT		;If above 'z' in ASCII, not lowercase
 ;Thus we have filtered for lowercase chars:
 
-			SUB BYTE [R13+RBX],0X20	;Subtract 0x20 to give upper case
+;			SUB BYTE [R13+RBX],0X20	;Subtract 0x20 to give upper case
 
-		.NEXT:
-			DEC RBX			;Decrement counter
-			CMP RBX,0
-			JNZ SCAN		;Loopback for remaining chars
+;		.NEXT:
+;			DEC RBX			;Decrement counter
+;			CMP RBX,0
+;			JNZ SCAN		;Loopback for remaining chars
 
 ;Write buffer full of processed text to stdout
+
+;Setup registers for the process buffer step
+
+			MOV RBX,RAX
+			MOV R13,BUFF
+;			DEC R13
+
+;Go through the buffer and convert lowercase chars to uppercase chars
+
+		SCAN:
+			CMP BYTE [R13-1+RBX],61H
+			JB  NEXT
+			CMP BYTE [R13-1+RBX],7AH
+			JA  NEXT
+
+			SUB BYTE [R13-1+RBX],20H
+
+		NEXT:
+			DEC RBX
+			JNZ SCAN
+
 
 		WRITE:
 			MOV RAX,1		;Specify sys_write call
